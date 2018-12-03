@@ -1,31 +1,43 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux'
-import { setTesting } from '../actions/templateActions'
+import {BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+import TemplateComponent from '../components/TemplateComponent'
+import { getCharacters } from '../actions/characterActions'
 
 class App extends Component {
+  componentDidMount() {
+    console.log('component did mount')
+    console.log(this.props)
+    this.props.getCharacters()
+  }
   render() {
     return (
-      <div className="App">
-        Hello: {this.props.testing}
-        <br/>
-        <button className="btn btn-primary" onClick={() => this.props.setTesting(1)}>
-        Set Testing
-        </button>
-      </div>
+      <Router>
+        <Fragment>
+          <div className="App">
+            <div>
+              <Switch>
+                <Route exact path='/testing' component={TemplateComponent}/>
+              </Switch>
+            </div>
+          </div>
+        </Fragment>
+      </Router>
     );
   }
 }
 
 const mapStateToProps = (state) => {
   return {
-    testing: state.template.testing,
+    characters: state.characters.list,
+    character: state.characters.character
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setTesting: (testing) => {
-      dispatch(setTesting(testing))
+    getCharacters: () => {
+      dispatch(getCharacters())
     }
   }
 }

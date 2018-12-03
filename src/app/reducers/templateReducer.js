@@ -1,8 +1,6 @@
 const templateReducer = (state = {
   testing: 0,
 }, action) => {
-  console.log('IN: templateReducer, state:')
-  console.log(state)
   switch (action.type) {
     case "SET_TESTING":
       state = {
