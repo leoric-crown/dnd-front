@@ -1,17 +1,17 @@
-const characterReducer = (state = {
+const conditionReducer = (state = {
   list: []
 }, action) => {
   switch (action.type) {
-    case 'GET_ALL_CHARACTERS':
+    case 'GET_ALL_CONDITIONS':
       state = {
         ...state,
-        list: action.payload.characters
+        list: action.payload.conditions
       }
       break
-    case 'GET_CHARACTER':
+    case 'GET_CONDITION':
       state = {
         ...state,
-        character: action.payload.character
+        character: action.payload.condition
       }
       break
     default:
@@ -20,4 +20,4 @@ const characterReducer = (state = {
   return state
 }
 
-export default characterReducer
+export default conditionReducer

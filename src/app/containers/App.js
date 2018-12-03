@@ -1,14 +1,19 @@
 import React, { Component, Fragment } from 'react';
+
+import './css/App.css';
 import { connect } from 'react-redux'
 import {BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import TemplateComponent from '../components/TemplateComponent'
+import Encounters from '../components/Encounters'
 import { getCharacters } from '../actions/characterActions'
+import { getEncounters } from '../actions/encounterActions'
+import { getConditions } from '../actions/conditionActions'
 
 class App extends Component {
   componentDidMount() {
-    console.log('component did mount')
-    console.log(this.props)
-    this.props.getCharacters()
+    this.props.dispatch(getCharacters())
+    this.props.dispatch(getEncounters())
+    this.props.dispatch(getConditions())
   }
   render() {
     return (
@@ -18,6 +23,7 @@ class App extends Component {
             <div>
               <Switch>
                 <Route exact path='/testing' component={TemplateComponent}/>
+                <Route exact path='/encounters' component={Encounters}/>
               </Switch>
             </div>
           </div>
@@ -30,16 +36,17 @@ class App extends Component {
 const mapStateToProps = (state) => {
   return {
     characters: state.characters.list,
-    character: state.characters.character
+    //encounters: state.encounters.list
   }
 }
-
+/*
 const mapDispatchToProps = (dispatch) => {
   return {
     getCharacters: () => {
       dispatch(getCharacters())
     }
   }
-}
+}*/
 
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+
+export default connect(mapStateToProps)(App);

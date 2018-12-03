@@ -1,17 +1,17 @@
-const characterReducer = (state = {
+const encounterReducer = (state = {
   list: []
 }, action) => {
   switch (action.type) {
-    case 'GET_ALL_CHARACTERS':
+    case 'GET_ALL_ENCOUNTERS':
       state = {
         ...state,
-        list: action.payload.characters
+        list: action.payload.encounters
       }
       break
-    case 'GET_CHARACTER':
+    case 'GET_ENCOUNTER':
       state = {
         ...state,
-        character: action.payload.character
+        encounter: action.payload.encounter
       }
       break
     default:
@@ -20,4 +20,4 @@ const characterReducer = (state = {
   return state
 }
 
-export default characterReducer
+export default encounterReducer
