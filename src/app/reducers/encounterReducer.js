@@ -5,6 +5,7 @@ const encounterReducer = (state = {
     case 'GET_ALL_ENCOUNTERS':
     case 'ADD_ENCOUNTER':
     case 'REMOVE_ENCOUNTER':
+    case 'PATCH_ENCOUNTER':
       state = {
         ...state,
         list: action.payload.encounters

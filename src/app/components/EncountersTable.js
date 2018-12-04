@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { removeEncounter } from '../actions/encounterActions'
+import { removeEncounter, updateEncounter } from '../actions/encounterActions'
 import ReactTable from 'react-table'
 import '../css/App.css'
 import 'react-table/react-table.css'
@@ -13,8 +13,20 @@ class EncountersTable extends Component {
       editableCell: {
         id: null,
         editableProp: null,
-        value: null
+        value: null,
+        originalValue: null
       }
+  }
+
+  resetEditableCell = () => {
+    this.setState({
+      editableCell: {
+        id: null,
+        editableProp: null,
+        value: null,
+        originalValue: null
+      }
+    })
   }
 
   handleDelete = url => {
@@ -30,6 +42,7 @@ class EncountersTable extends Component {
           id: id,
           editableProp: prop,
           value: value,
+          originalValue: value,
         }
       }
     })
@@ -46,24 +59,24 @@ class EncountersTable extends Component {
   }
 
   handleKeyUp = key => {
-    const { editableCell } = this.state
     switch(key) {
       case 'Enter':
+        this.handleSubmit()
+        break
       case 'Escape':
-        this.setState({
-          editableCell: {
-            ...editableCell,
-            ...{
-              id: null,
-              editableProp: null,
-              value: null
-            }
-          }
-        })
+        this.resetEditableCell()
         break
       default:
         break
     }
+  }
+
+  handleSubmit = async () => {
+    const { editableCell } = this.state
+    if (editableCell.value !== editableCell.originalValue) {
+      this.props.dispatch(updateEncounter(editableCell))
+    }
+    this.resetEditableCell()
   }
 
   getCell = (row, prop) => {
@@ -84,16 +97,15 @@ class EncountersTable extends Component {
     if( id === rowId && editableProp === prop) {
       const value = (this.state.editableCell.value == null) ? rowValue : this.state.editableCell.value
       return (
-        <div>
+        <div className = 'container'>
           <input type = 'text'
             autoFocus
             value = {value}
             onChange = {event => {this.handleInput(event.target.value)}}
             onKeyUp = {event => {this.handleKeyUp(event.key)}}
-            onBlur = {console.log('blur')}
-            onFocus = {console.log('focus')}
-            style = { {textAlign: 'center', width:'50%'} }
+            className = 'row editableField'
           />
+          <button className="cancel" onClick={() => this.resetEditableCell()}/>
         </div>
       )
     }
@@ -189,6 +201,7 @@ class EncountersTable extends Component {
           columns = {this.getColumns()}
           className  = "-striped -highlight"
           sortable = {true}
+          defaultPageSize = {10}
         />
       </div>
     )

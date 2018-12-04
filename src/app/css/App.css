@@ -23,7 +23,7 @@
 }
 
 .rows .row {
-  display: inline-block
+  display: inline-block;
 }
 
 .container {
@@ -39,6 +39,49 @@
   padding:10;
   font:inherit;
   width:50%
+}
+
+.editableField {
+  text-align: center;
+  width: 43%
+}
+
+.cancel {
+  width: 7%;
+  font-weight: 400;
+  font-family:inherit;
+}
+
+.cancel:after{
+  content: '\00d7';
+  color:#FF0000;
+}
+
+.active {
+  font-weight: bold;
+}
+
+.nav ul {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.nav li:first-child {
+  padding: 20;
+  padding-left: 0;
+}
+
+ul {
+  padding-left: 0;
+}
+
+li {
+  list-style-type: none;
+  padding: 10px;
+  text-decoration: none;
+  margin:10px 30px 0 0;
 }
 
 input[type='text'] {

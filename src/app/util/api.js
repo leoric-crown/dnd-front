@@ -13,7 +13,6 @@ export const fetchEncounter = (url) => {
     method: 'GET',
     header: {'Content-Type': 'application/json'}
   })
-  .then(res => res.json())
 }
 
 export const postEncounter = (body) => {
@@ -24,10 +23,21 @@ export const postEncounter = (body) => {
   })
 }
 
+export const patchEncounter = (data) => {
+  const body = [{
+    propName: data.editableProp,
+    value: data.value
+  }]
+  return fetch(`${config.apiPath}/encounters/${data.id}`, {
+    method: 'PATCH',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(body)
+  })
+}
+
 export const deleteEncounter = (url) => {
   return fetch(url, {
     method: 'DELETE',
     header: {'Content-Type': 'application/json'}
   })
-  .then(res => res.json())
 }

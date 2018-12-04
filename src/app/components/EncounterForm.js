@@ -8,7 +8,6 @@ const STATUS = 'status'
 
 class EncounterForm extends Component {
   state = {
-    url: '',
     name: '',
     status: ''
   }
@@ -31,17 +30,12 @@ class EncounterForm extends Component {
     }
   }
 
-  handlePatch = () => {
-
-  }
-
-  preparePatchBody = () => {
-
-  }
-
-  handleSubmit = async event => {
+  handleSubmit = event => {
     event.preventDefault()
-    const body = JSON.stringify(this.state)
+    const body = JSON.stringify({
+      name: this.state.name,
+      status: (this.state.status === '' ? 'Preparing' : this.state.status)
+    })
     this.props.dispatch(addEncounter(body))
     this.setState({
       name: '',
@@ -64,14 +58,12 @@ class EncounterForm extends Component {
               onChange = {event => {this.handleInput(event.target.value, ENCOUNTER_NAME)}}
               className = 'row'
             />
-            <br/>
             <input type = 'text'
               placeholder = 'Encounter Status'
               value = {status}
               onChange = {event => {this.handleInput(event.target.value, STATUS)}}
               className = 'row'
             />
-            <br/>
             <button type = 'submit' className = 'row'>
               Save
             </button>

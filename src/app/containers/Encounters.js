@@ -1,13 +1,12 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import EncounterForm from './EncounterForm'
-import EncountersTable from './EncountersTable'
+import EncounterForm from '../components/EncounterForm'
+import EncountersTable from '../components/EncountersTable'
 
 class Encounters extends Component {
   render() {
     return (
       <div>
-        <h1> Encounters </h1>
         <EncounterForm/>
         <EncountersTable/>
       </div>

@@ -4,7 +4,9 @@ import '../css/App.css';
 import { connect } from 'react-redux'
 import {BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import TemplateComponent from '../components/TemplateComponent'
-import Encounters from '../components/Encounters'
+import Nav from '../components/Nav'
+import Encounters from './Encounters'
+import Characters from './Characters'
 import { getCharacters } from '../actions/characterActions'
 import { getEncounters } from '../actions/encounterActions'
 import { getConditions } from '../actions/conditionActions'
@@ -21,9 +23,11 @@ class App extends Component {
         <Fragment>
           <div className="App">
             <div>
+              <Nav/>
               <Switch>
                 <Route exact path='/testing' component={TemplateComponent}/>
                 <Route exact path='/encounters' component={Encounters}/>
+                <Route exact path='/characters' component={Characters}/>
               </Switch>
             </div>
           </div>

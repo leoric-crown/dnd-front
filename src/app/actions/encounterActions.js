@@ -1,4 +1,4 @@
-import { fetchAllEncounters, fetchEncounter, postEncounter, deleteEncounter } from '../util/api'
+import { fetchAllEncounters, fetchEncounter, postEncounter, patchEncounter, deleteEncounter } from '../util/api'
 
 export function getEncounters (dispatch) {
   return dispatch => {
@@ -35,6 +35,21 @@ export function addEncounter(body, dispatch) {
     .then(data => {
       dispatch({
         type: 'ADD_ENCOUNTER',
+        payload: {
+          encounters: data.encounters
+        }
+      })
+    })
+  }
+}
+
+export function updateEncounter (body) {
+  return dispatch => {
+    patchEncounter(body)
+    .then(fetchAllEncounters)
+    .then(data => {
+      dispatch({
+        type: 'PATCH_ENCOUNTER',
         payload: {
           encounters: data.encounters
         }
