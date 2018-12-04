@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 
-import './css/App.css';
+import '../css/App.css';
 import { connect } from 'react-redux'
 import {BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import TemplateComponent from '../components/TemplateComponent'

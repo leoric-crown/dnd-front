@@ -1,25 +1,118 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { getEncounters } from '../actions/encounterActions'
+import { removeEncounter } from '../actions/encounterActions'
 import ReactTable from 'react-table'
+import '../css/App.css'
 import 'react-table/react-table.css'
 
+const NAME = 'name'
+const STATUS = 'status'
+
 class EncountersTable extends Component {
-
-  handleDelete = async (row) => {
-    await fetch(row.original.request.url, {
-      method: 'DELETE',
-      header: {'Content-Type': 'application/json'}
-    })
-    this.props.dispatch(getEncounters())
+  state = {
+      editableCell: {
+        id: null,
+        editableProp: null,
+        value: null
+      }
   }
-  render() {
-    const { encounters } = this.props
 
-    const tableColumns = [
+  handleDelete = url => {
+    this.props.dispatch(removeEncounter(url))
+  }
+
+  handleClick = (id, prop, value) => {
+    const { editableCell } = this.state.editableCell
+    this.setState({
+      editableCell: {
+        ...editableCell,
+        ...{
+          id: id,
+          editableProp: prop,
+          value: value,
+        }
+      }
+    })
+  }
+
+  handleInput = value => {
+    const { editableCell } = this.state
+    this.setState({
+      editableCell: {
+        ...editableCell,
+        ...{value: value}
+      }
+    })
+  }
+
+  handleKeyUp = key => {
+    const { editableCell } = this.state
+    switch(key) {
+      case 'Enter':
+      case 'Escape':
+        this.setState({
+          editableCell: {
+            ...editableCell,
+            ...{
+              id: null,
+              editableProp: null,
+              value: null
+            }
+          }
+        })
+        break
+      default:
+        break
+    }
+  }
+
+  getCell = (row, prop) => {
+    var rowValue
+    switch(prop) {
+      case NAME:
+        rowValue = row.original.name
+        break
+      case STATUS:
+        rowValue = row.original.status
+        break
+      default:
+        break
+    }
+
+    const { id, editableProp } = this.state.editableCell
+    const rowId = row.original._id
+    if( id === rowId && editableProp === prop) {
+      const value = (this.state.editableCell.value == null) ? rowValue : this.state.editableCell.value
+      return (
+        <div>
+          <input type = 'text'
+            autoFocus
+            value = {value}
+            onChange = {event => {this.handleInput(event.target.value)}}
+            onKeyUp = {event => {this.handleKeyUp(event.key)}}
+            onBlur = {console.log('blur')}
+            onFocus = {console.log('focus')}
+            style = { {textAlign: 'center', width:'50%'} }
+          />
+        </div>
+      )
+    }
+
+    return (
+      <div>
+        <div></div>
+        <button className="btn btn-primary editableButton" onClick={() => this.handleClick(row.original._id, prop, rowValue)}>
+        {rowValue}
+        </button>
+      </div>
+    )
+  }
+
+  getColumns = () => {
+    return [
         {
           Header: 'Name',
-          accessor: 'name',
+          Cell: row => this.getCell(row,NAME),
           getProps: (state, rowInfo, column) => {
             return {
               style: {
@@ -38,6 +131,7 @@ class EncountersTable extends Component {
         {
           Header: 'Status',
           accessor: 'status',
+          Cell: row => (this.getCell(row,STATUS)),
           getProps: (state, rowInfo, column) => {
             return{
               style: {
@@ -51,10 +145,12 @@ class EncountersTable extends Component {
                 fontWeight: 'bold'
               }
             }
-          }
+          },
         },
         {
-          Header: 'Actions',
+          Header: '',
+          sortable: false,
+          width: 100,
           getProps: (state, rowInfo, column) => {
             return{
               style: {
@@ -71,7 +167,7 @@ class EncountersTable extends Component {
           },
           Cell: row => (
             <div>
-              <button className="btn btn-primary" onClick={() => this.handleDelete(row)
+              <button className="btn btn-primary" onClick={() => this.handleDelete(row.original.request.url)
               }>
               Delete
               </button>
@@ -79,23 +175,18 @@ class EncountersTable extends Component {
           )
         }
       ]
+  }
 
+  render() {
+    const { encounters } = this.props
+    console.log(this.state)
     return(
 
       <div>
         <h3> Encounters Table </h3>
         <ReactTable
-          getTrProps={(state,rowInfo,column) => {
-            var props = {
-              style: {}
-            }
-            if(rowInfo && rowInfo.row && rowInfo.row.name) {
-              props.style.backgroundColor = (rowInfo.row.name === 'Rhuuan' ? 'green' : null)
-            }
-            return props
-          }}
           data = {encounters}
-          columns = {tableColumns}
+          columns = {this.getColumns()}
           className  = "-striped -highlight"
           sortable = {true}
         />

@@ -3,6 +3,8 @@ const encounterReducer = (state = {
 }, action) => {
   switch (action.type) {
     case 'GET_ALL_ENCOUNTERS':
+    case 'ADD_ENCOUNTER':
+    case 'REMOVE_ENCOUNTER':
       state = {
         ...state,
         list: action.payload.encounters

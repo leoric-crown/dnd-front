@@ -22,11 +22,30 @@
   color: #61dafb;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.rows .row {
+  display: inline-block
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.editableButton {
+  background:none;
+  color:inherit;
+  border:none;
+  padding:10;
+  font:inherit;
+  width:50%
+}
+
+input[type='text'] {
+  font-size:inherit;
+  font-family:inherit;
+}
+button {
+  font-size:inherit;
+  font-family:inherit;
 }

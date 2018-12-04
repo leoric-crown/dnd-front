@@ -1,10 +1,8 @@
+import { fetchAllEncounters, fetchEncounter, postEncounter, deleteEncounter } from '../util/api'
+
 export function getEncounters (dispatch) {
   return dispatch => {
-    fetch('http://localhost:5000/encounters', {
-      method: 'GET',
-      headers: {'Content-Type': 'application/json'}
-    })
-    .then(res => res.json())
+    fetchAllEncounters()
     .then(data => {
       dispatch({
         type: 'GET_ALL_ENCOUNTERS',
@@ -18,11 +16,7 @@ export function getEncounters (dispatch) {
 
 export function getEncounter (dispatch, url) {
   return (dispatch) => {
-    fetch(url, {
-      method: 'GET',
-      header: {'Content-Type': 'application/json'}
-    })
-    .then(res => res.json())
+    fetchEncounter(url)
     .then(data => {
       dispatch({
         type: 'GET_ENCOUNTER',
@@ -34,28 +28,32 @@ export function getEncounter (dispatch, url) {
   }
 }
 
-export function deleteEncounter(url, dispatch) {
-  return (dispatch) => {
-    if(url) {
-      fetch(url, {
-        method: 'DELETE',
-        header: {'Content-Type': 'application/json'}
+export function addEncounter(body, dispatch) {
+  return dispatch => {
+    postEncounter(body)
+    .then(fetchAllEncounters)
+    .then(data => {
+      dispatch({
+        type: 'ADD_ENCOUNTER',
+        payload: {
+          encounters: data.encounters
+        }
       })
-      .then(
-        fetch('http://localhost:5000/encounters', {
-          method: 'GET',
-          headers: {'Content-Type': 'application/json'}
-        })
-        .then(res => res.json())
-        .then(data => {
-          dispatch({
-            type: 'GET_ALL_ENCOUNTERS',
-            payload: {
-              encounters: data.encounters
-            }
-          })
-        })
-      )
-    }
+    })
+  }
+}
+
+export function removeEncounter (url, dispatch) {
+  return dispatch => {
+    deleteEncounter(url)
+    .then(fetchAllEncounters)
+    .then(data => {
+      dispatch({
+        type: 'REMOVE_ENCOUNTER',
+        payload: {
+          encounters: data.encounters
+        }
+      })
+    })
   }
 }

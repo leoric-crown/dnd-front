@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import './css/EncounterForm.css'
-import { getEncounters } from '../actions/encounterActions'
+import '../css/App.css'
+import { addEncounter } from '../actions/encounterActions'
 
-const ENCOUNTER_NAME = 'encounterName'
-const STATUS = 'encounterStatus'
+const ENCOUNTER_NAME = 'name'
+const STATUS = 'status'
 
 class EncounterForm extends Component {
   state = {
@@ -41,12 +41,8 @@ class EncounterForm extends Component {
 
   handleSubmit = async event => {
     event.preventDefault()
-    await fetch('http://localhost:5000/encounters', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify (this.state)
-    })
-    this.props.dispatch(getEncounters())
+    const body = JSON.stringify(this.state)
+    this.props.dispatch(addEncounter(body))
     this.setState({
       name: '',
       status: ''
@@ -60,7 +56,7 @@ class EncounterForm extends Component {
       <div>
         <h3>Encounter Form</h3>
         <form onSubmit = {this.handleSubmit}>
-          <div class='container'>
+          <div className='container'>
             <input type = 'text'
               ref = {this.firstInput}
               placeholder = 'Encounter Name'
