@@ -1,15 +1,19 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { removeEncounter, updateEncounter } from '../actions/encounterActions'
-import { getDeleteButton, getEditableTextField, getEditableButton, getEditableCheckBox } from '../util/components'
+import { removeCharacter, updateCharacter } from '../actions/characterActions'
+import { getDeleteButton, getEditableTextField, getEditableButton, getEditableCheckBox} from '../util/components'
 import ReactTable from 'react-table'
 import '../css/App.css'
 import 'react-table/react-table.css'
 
 const NAME = {name: 'name', type: 'text'}
-const STATUS = {name: 'status', type: 'text'}
+const LEVEL = {name: 'level', type: 'text'}
+const ARMOR_CLASS = {name: 'armorclass', type: 'text'}
+const MAX_HIT_POINTS = {name: 'maxhitpoints', type: 'text'}
+const CONDITIONS = {name: 'conditions', type: 'select'}
+const PLAYER = {name: 'player', type: 'checkBox', checked: 'Yes', unchecked: 'No'}
 
-class EncountersTable extends Component {
+class CharactersTable extends Component {
   state = {
       editableCell: {
         id: null,
@@ -34,7 +38,7 @@ class EncountersTable extends Component {
   }
 
   handleDelete = url => {
-    this.props.dispatch(removeEncounter(url))
+    this.props.dispatch(removeCharacter(url))
   }
 
   handleClick = (payload) => {
@@ -76,8 +80,12 @@ class EncountersTable extends Component {
 
   handleSubmit = () => {
     const { editableCell } = this.state
+
     if (editableCell.value !== editableCell.originalValue) {
-      this.props.dispatch(updateEncounter(editableCell))
+      this.props.dispatch(updateCharacter(editableCell))
+    } else if (editableCell.isCheckBox){
+      editableCell.value = !editableCell.value
+      this.props.dispatch(updateCharacter(editableCell))
     }
     this.resetEditableCell()
   }
@@ -88,9 +96,18 @@ class EncountersTable extends Component {
       case NAME:
         cellValue = row.original.name
         break
-      case STATUS:
-        cellValue = row.original.status
+      case LEVEL:
+        cellValue = row.original.level
         break
+      case ARMOR_CLASS:
+        cellValue = row.original.armorclass
+        break
+      case MAX_HIT_POINTS:
+        cellValue = row.original.maxhitpoints
+        break
+      case PLAYER:
+        cellValue = row.original.player
+      case CONDITIONS:
       default:
         break
     }
@@ -120,7 +137,7 @@ class EncountersTable extends Component {
     }
     var displayValue
     if(prop.type === 'checkBox') {
-      displayValue = (cellValue ? prop.type.on : prop.type.off)
+      displayValue = (cellValue ? prop.checked : prop.unchecked)
     } else {
       displayValue = cellValue
     }
@@ -142,12 +159,27 @@ class EncountersTable extends Component {
         {
           Header: 'Name',
           Cell: row => this.getCell(row,NAME),
-          getHeaderProps: () => {return {style: {fontWeight: 'bold'}}},
+          getHeaderProps: () => {return {style: {fontWeight: 'bold'}}}
         },
         {
-          Header: 'Status',
-          Cell: row => this.getCell(row,STATUS),
-          getHeaderProps: () => {return {style: {fontWeight: 'bold'}}},
+          Header: 'Level',
+          Cell: row => (this.getCell(row,LEVEL)),
+          getHeaderProps: () => {return {style: {fontWeight: 'bold'}}}
+        },
+        {
+          Header: 'Armor Class',
+          Cell: row => this.getCell(row,ARMOR_CLASS),
+          getHeaderProps: () => {return {style: {fontWeight: 'bold'}}}
+        },
+        {
+          Header: 'Max HP',
+          Cell: row => this.getCell(row,MAX_HIT_POINTS),
+          getHeaderProps: () => {return {style: {fontWeight: 'bold'}}}
+        },
+        {
+          Header: 'Player',
+          Cell: row => this.getCell(row,PLAYER),
+          getHeaderProps: () => {return {style: {fontWeight: 'bold'}}}
         },
         {
           Header: '',
@@ -159,14 +191,14 @@ class EncountersTable extends Component {
   }
 
   render() {
-    const { encounters } = this.props
+    const { characters } = this.props
     console.log(this.state)
     return(
 
       <div>
-        <h3> Encounters Table </h3>
+        <h3> Characters Table </h3>
         <ReactTable
-          data = {encounters}
+          data = {characters}
           columns = {this.getColumns()}
           className  = "-striped -highlight"
           sortable = {true}
@@ -179,9 +211,9 @@ class EncountersTable extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    encounters: state.encounters.list,
+    characters: state.characters.list,
     testing: state.template.testing
   }
 }
 
-export default connect(mapStateToProps)(EncountersTable);
+export default connect(mapStateToProps)(CharactersTable);

@@ -1,14 +1,13 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import '../css/App.css'
-import { addEncounter } from '../actions/encounterActions'
+import { addCharacter } from '../actions/characterActions'
 
 const CHARACTER_NAME = 'name'
 const LEVEL = 'level'
 const ARMOR_CLASS = 'armorclass'
-const HIT_POINTS = 'hitpoints'
 const MAX_HIT_POINTS = 'maxhitpoints'
-const CONDITION = 'condition'
+const CONDITIONS = 'condition'
 const PLAYER = 'player'
 
 class CharacterForm extends Component {
@@ -16,16 +15,14 @@ class CharacterForm extends Component {
     name: '',
     level: '',
     armorclass: '',
-    hitpoints: '',
     maxhitpoints: '',
-    condition: '',
+    conditions: [],
     player: false
   }
   constructor(props) {
     super(props)
     this.firstInput = React.createRef()
   }
-
 
   handleInput = (value, key) => {
     switch(key) {
@@ -38,16 +35,14 @@ class CharacterForm extends Component {
       case ARMOR_CLASS:
         this.setState({armorclass: value})
         break
-      case HIT_POINTS:
-        this.setState({hitpoints: value})
-        break
       case MAX_HIT_POINTS:
         this.setState({maxhitpoints: value})
         break
-      case CONDITION:
-        this.setState({condition: value})
+      case CONDITIONS:
+        this.setState({conditions: value})
         break
       case PLAYER:
+      console.log(value)
         this.setState({player: value})
         break
       default:
@@ -55,25 +50,35 @@ class CharacterForm extends Component {
     }
   }
 
+  getLevelOptions = () => {
+    const levels = Array.from(Array(21).keys())
+    return levels.map(level => {
+      if(level === 0) return (
+        <option key={0} value='Level' disabled> Level </option>
+      )
+      return (
+        <option key={level} value={level}>{level}</option>
+      )
+    })
+  }
+
   handleSubmit = event => {
     event.preventDefault()
     const body = JSON.stringify(this.state)
-    //this.props.dispatch(addEncounter(body))
+    this.props.dispatch(addCharacter(body))
     this.setState({
       name: '',
       level: '',
       armorclass: '',
-      hitpoints: '',
       maxhitpoints: '',
-      condition: '',
+      conditions: [],
       player: false
     })
     this.firstInput.current.focus()
   }
 
   render() {
-    const { name, level, armorclass, hitpoints, maxhitpoints, condition, player } = this.state
-    console.log(this.state)
+    const { name, armorclass, maxhitpoints} = this.state
     return (
       <div>
         <h3>Character Form</h3>
@@ -85,29 +90,24 @@ class CharacterForm extends Component {
               value = {name}
               onChange = {event => {this.handleInput(event.target.value, CHARACTER_NAME)}}
             />
-            <input type = 'text'
-              placeholder = 'Level'
-              value = {level}
-              onChange = {event => {this.handleInput(event.target.value, LEVEL)}}
-            />
+            <select
+              id='levelSelect'
+              defaultValue={'Level'}
+              onChange={event => {this.handleInput(event.target.value, LEVEL)}}>
+              {this.getLevelOptions()}
+            </select>
             <input type = 'text'
               placeholder = 'Armor Class'
               value = {armorclass}
               onChange = {event => {this.handleInput(event.target.value, ARMOR_CLASS)}}
             />
             <input type = 'text'
-              placeholder = 'HP'
-              value = {hitpoints}
-              onChange = {event => {this.handleInput(event.target.value, HIT_POINTS)}}
-            />
-            <input type = 'text'
               placeholder = 'Max HP'
               value = {maxhitpoints}
               onChange = {event => {this.handleInput(event.target.value, MAX_HIT_POINTS)}}
             />
-            <input type = 'select'
-
-            />
+            {'  PC  '}?
+            <input type = 'checkbox' checked = {this.state.player} className = 'row' onChange = {event => {this.handleInput(event.target.checked, PLAYER)}}/>
             <button type = 'submit' className = 'row'>
               Save
             </button>
@@ -117,6 +117,5 @@ class CharacterForm extends Component {
     )
   }
 }
-
 
 export default connect()(CharacterForm);

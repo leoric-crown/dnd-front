@@ -1,10 +1,8 @@
+import { fetchAllCharacters, postCharacter, patchByUrl, deleteByUrl } from '../util/api'
+
 export function getCharacters (dispatch) {
   return dispatch => {
-    fetch('http://localhost:5000/characters', {
-      method: 'GET',
-      headers: {'Content-Type': 'application/json'}
-    })
-    .then(res => res.json())
+    fetchAllCharacters()
     .then(data => {
       dispatch({
         type: 'GET_ALL_CHARACTERS',
@@ -16,18 +14,45 @@ export function getCharacters (dispatch) {
   }
 }
 
-export function getCharacter (dispatch, url) {
-  return (dispatch) => {
-    fetch(url, {
-      method: 'GET',
-      header: {'Content-Type': 'application/json'}
-    })
-    .then(res => res.json())
+export function addCharacter (body) {
+  return dispatch => {
+    postCharacter(body)
+    .then(fetchAllCharacters)
     .then(data => {
       dispatch({
-        type: 'GET_CHARACTER',
+        type:'ADD_CHARACTER',
         payload: {
-          character: data
+          characters: data.characters
+        }
+      })
+    })
+  }
+}
+
+export function updateCharacter (body) {
+  return dispatch => {
+    patchByUrl(body)
+    .then(fetchAllCharacters)
+    .then(data => {
+      dispatch({
+        type: 'PATCH_CHARACTER',
+        payload: {
+          characters: data.characters
+        }
+      })
+    })
+  }
+}
+
+export function removeCharacter (url, dispatch) {
+  return dispatch => {
+    deleteByUrl(url)
+    .then(fetchAllCharacters)
+    .then(data => {
+      dispatch({
+        type: 'REMOVE_CHARACTER',
+        payload: {
+          characters: data.characters
         }
       })
     })

@@ -1,13 +1,14 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import CharacterForm from '../components/CharacterForm'
-// import EncountersTable from '../components/EncountersTable'
+import CharactersTable from '../components/CharactersTable'
 
 class Characters extends Component {
   render() {
     return (
       <div>
         <CharacterForm/>
+        <CharactersTable/>
       </div>
     )
   }
@@ -16,7 +17,7 @@ class Characters extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    encounters: state.encounters.list,
+    characters: state.characters.list,
   }
 }
 

@@ -1,4 +1,4 @@
-import { fetchAllEncounters, fetchEncounter, postEncounter, patchEncounter, deleteEncounter } from '../util/api'
+import { fetchAllEncounters, fetchEncounter, postEncounter, patchByUrl, deleteByUrl } from '../util/api'
 
 export function getEncounters (dispatch) {
   return dispatch => {
@@ -45,7 +45,7 @@ export function addEncounter(body, dispatch) {
 
 export function updateEncounter (body) {
   return dispatch => {
-    patchEncounter(body)
+    patchByUrl(body)
     .then(fetchAllEncounters)
     .then(data => {
       dispatch({
@@ -60,7 +60,7 @@ export function updateEncounter (body) {
 
 export function removeEncounter (url, dispatch) {
   return dispatch => {
-    deleteEncounter(url)
+    deleteByUrl(url)
     .then(fetchAllEncounters)
     .then(data => {
       dispatch({
