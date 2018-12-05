@@ -89,10 +89,6 @@ select {
   padding: 1px;
 }
 
-.span {
-  padding: 10px;
-}
-
 input[type='text'] {
   font-size:inherit;
   font-family:inherit;

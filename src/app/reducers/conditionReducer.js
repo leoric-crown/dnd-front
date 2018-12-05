@@ -8,12 +8,6 @@ const conditionReducer = (state = {
         list: action.payload.conditions
       }
       break
-    case 'GET_CONDITION':
-      state = {
-        ...state,
-        character: action.payload.condition
-      }
-      break
     default:
       state = { ...state }
   }

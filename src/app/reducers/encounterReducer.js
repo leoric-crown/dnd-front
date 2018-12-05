@@ -11,12 +11,6 @@ const encounterReducer = (state = {
         list: action.payload.encounters
       }
       break
-    case 'GET_ENCOUNTER':
-      state = {
-        ...state,
-        encounter: action.payload.encounter
-      }
-      break
     default:
       state = { ...state }
   }

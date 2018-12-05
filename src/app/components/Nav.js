@@ -22,6 +22,13 @@ class Nav extends Component {
               </NavLink>
             </div>
           </li>
+          <li>
+            <div>
+              <NavLink to='/initiatives' exact activeClassName='active'>
+                Initiatives
+              </NavLink>
+            </div>
+          </li>
         </ul>
       </nav>
     )

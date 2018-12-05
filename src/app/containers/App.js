@@ -7,15 +7,18 @@ import TemplateComponent from '../components/TemplateComponent'
 import Nav from '../components/Nav'
 import Encounters from './Encounters'
 import Characters from './Characters'
+import Initiatives from './Initiatives'
 import { getCharacters } from '../actions/characterActions'
 import { getEncounters } from '../actions/encounterActions'
 import { getConditions } from '../actions/conditionActions'
+import { getInitiatives } from '../actions/initiativeActions'
 
 class App extends Component {
-  componentDidMount() {
+  componentWillMount() {
     this.props.dispatch(getCharacters())
     this.props.dispatch(getEncounters())
     this.props.dispatch(getConditions())
+    this.props.dispatch(getInitiatives())
   }
   render() {
     return (
@@ -28,6 +31,7 @@ class App extends Component {
                 <Route exact path='/testing' component={TemplateComponent}/>
                 <Route exact path='/encounters' component={Encounters}/>
                 <Route exact path='/characters' component={Characters}/>
+                <Route exact path='/initiatives' component={Initiatives}/>
               </Switch>
             </div>
           </div>

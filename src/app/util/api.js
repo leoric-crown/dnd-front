@@ -1,5 +1,32 @@
 import config from '../../config/main'
 
+export const fetchCollection = (collection) => {
+  console.log(`in fetchCollection, fetching ${config.apiPath}/${collection}`)
+  return fetch(`${config.apiPath}/${collection}`, {
+    method: 'GET',
+    header: {'Content-Type': 'application/json'}
+  })
+  .then(res => res.json())
+}
+
+export const fetchAllInitiatives = () => {
+  return fetch(`${config.apiPath}/initiatives`, {
+    method: 'GET',
+    header: {'Content-Type': 'application/json'}
+  })
+  .then(res => res.json())
+}
+
+export const postDocument = (collection, body) => {
+  console.log('POSTING DOCUMENT')
+  console.log(body)
+  return fetch(`${config.apiPath}/${collection}`, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: body
+  })
+}
+
 export const fetchAllEncounters = () => {
   return fetch(`${config.apiPath}/encounters`, {
     method: 'GET',

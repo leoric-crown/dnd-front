@@ -13,7 +13,7 @@ const PLAYER = 'player'
 class CharacterForm extends Component {
   state = {
     name: '',
-    level: '',
+    level: 'Level',
     armorclass: '',
     maxhitpoints: '',
     conditions: [],
@@ -68,7 +68,7 @@ class CharacterForm extends Component {
     this.props.dispatch(addCharacter(body))
     this.setState({
       name: '',
-      level: '',
+      level: 'Level',
       armorclass: '',
       maxhitpoints: '',
       conditions: [],
@@ -92,7 +92,7 @@ class CharacterForm extends Component {
             />
             <select
               id='levelSelect'
-              defaultValue={'Level'}
+              value={this.state.level}
               onChange={event => {this.handleInput(event.target.value, LEVEL)}}>
               {this.getLevelOptions()}
             </select>

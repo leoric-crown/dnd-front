@@ -11,12 +11,6 @@ const characterReducer = (state = {
         list: action.payload.characters
       }
       break
-    case 'GET_CHARACTER':
-      state = {
-        ...state,
-        character: action.payload.character
-      }
-      break
     default:
       state = { ...state }
   }

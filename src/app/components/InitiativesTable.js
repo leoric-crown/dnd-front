@@ -1,19 +1,16 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { removeCharacter, updateCharacter } from '../actions/characterActions'
-import { getDeleteButton, getEditableTextField, getEditableButton, getEditableCheckBox} from '../util/components'
+import { removeInitiative, updateInitiative } from '../actions/initiativeActions'
+import { getDeleteButton, getEditableTextField, getEditableButton, getEditableCheckBox } from '../util/components'
 import ReactTable from 'react-table'
 import '../css/App.css'
 import 'react-table/react-table.css'
 
-const NAME = {name: 'name', type: 'text'}
-const LEVEL = {name: 'level', type: 'text'}
-const ARMOR_CLASS = {name: 'armorclass', type: 'text'}
-const MAX_HIT_POINTS = {name: 'maxhitpoints', type: 'text'}
-const CONDITIONS = {name: 'conditions', type: 'select'}
-const PLAYER = {name: 'player', type: 'checkBox', checked: 'Yes', unchecked: 'No'}
+const ENCOUNTER = {name: 'encounter', type: 'object'}
+const CHARACTER = {name: 'character', type: 'object'}
+const INITIATIVE = {name: 'initiative', type: 'text'}
 
-class CharactersTable extends Component {
+class InitiativesTable extends Component {
   state = {
       editableCell: {
         id: null,
@@ -38,7 +35,7 @@ class CharactersTable extends Component {
   }
 
   handleDelete = url => {
-    this.props.dispatch(removeCharacter(url))
+    this.props.dispatch(removeInitiative(url))
   }
 
   handleClick = (payload) => {
@@ -80,12 +77,8 @@ class CharactersTable extends Component {
 
   handleSubmit = () => {
     const { editableCell } = this.state
-
     if (editableCell.value !== editableCell.originalValue) {
-      this.props.dispatch(updateCharacter(editableCell))
-    } else if (editableCell.isCheckBox){
-      editableCell.value = !editableCell.value
-      this.props.dispatch(updateCharacter(editableCell))
+      this.props.dispatch(updateInitiative(editableCell))
     }
     this.resetEditableCell()
   }
@@ -93,22 +86,14 @@ class CharactersTable extends Component {
   getCellValue = (row, prop) => {
     var cellValue
     switch(prop) {
-      case NAME:
-        cellValue = row.original.name
+      case ENCOUNTER:
+        cellValue = row.original.encounter._id
         break
-      case LEVEL:
-        cellValue = row.original.level
+      case CHARACTER:
+        cellValue = row.original.character._id
         break
-      case ARMOR_CLASS:
-        cellValue = row.original.armorclass
-        break
-      case MAX_HIT_POINTS:
-        cellValue = row.original.maxhitpoints
-        break
-      case PLAYER:
-        cellValue = row.original.player
-        break
-      case CONDITIONS:
+      case INITIATIVE:
+        cellValue = row.original.initiative
         break
       default:
         break
@@ -139,7 +124,7 @@ class CharactersTable extends Component {
     }
     var displayValue
     if(prop.type === 'checkBox') {
-      displayValue = (cellValue ? prop.checked : prop.unchecked)
+      displayValue = (cellValue ? prop.type.on : prop.type.off)
     } else {
       displayValue = cellValue
     }
@@ -159,29 +144,31 @@ class CharactersTable extends Component {
   getColumns = () => {
     return [
         {
-          Header: 'Name',
-          Cell: row => this.getCell(row,NAME),
-          getHeaderProps: () => {return {style: {fontWeight: 'bold'}}}
+          Header: 'Encounter',
+          Cell: row => {
+            return (
+              <div>
+                {this.props.encounters.find((element) =>{
+                    return element._id === row.original.encounter
+                }).name}
+              </div>
+            )
+          },
+          getHeaderProps: () => {return {style: {fontWeight: 'bold'}}},
         },
         {
-          Header: 'Level',
-          Cell: row => (this.getCell(row,LEVEL)),
-          getHeaderProps: () => {return {style: {fontWeight: 'bold'}}}
+          Header: 'Character',
+          Cell: row => {
+            return (
+              <div>{row.original.characterStamp.name} </div>
+            )
+          },
+          getHeaderProps: () => {return {style: {fontWeight: 'bold'}}},
         },
         {
-          Header: 'Armor Class',
-          Cell: row => this.getCell(row,ARMOR_CLASS),
-          getHeaderProps: () => {return {style: {fontWeight: 'bold'}}}
-        },
-        {
-          Header: 'Max HP',
-          Cell: row => this.getCell(row,MAX_HIT_POINTS),
-          getHeaderProps: () => {return {style: {fontWeight: 'bold'}}}
-        },
-        {
-          Header: 'Player',
-          Cell: row => this.getCell(row,PLAYER),
-          getHeaderProps: () => {return {style: {fontWeight: 'bold'}}}
+          Header: 'Initiative',
+          Cell: row => this.getCell(row, INITIATIVE),
+          getHeaderProps: () => {return {style: {fontWeight: 'bold'}}},
         },
         {
           Header: '',
@@ -193,14 +180,13 @@ class CharactersTable extends Component {
   }
 
   render() {
-    const { characters } = this.props
-    console.log(this.state)
+    const { initiatives } = this.props
     return(
 
       <div>
-        <h3> Characters Table </h3>
+        <h3> Initiatives Table </h3>
         <ReactTable
-          data = {characters}
+          data = {initiatives}
           columns = {this.getColumns()}
           className  = "-striped -highlight"
           sortable = {true}
@@ -213,9 +199,9 @@ class CharactersTable extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    characters: state.characters.list,
-    testing: state.template.testing
+    initiatives: state.initiatives.list,
+    encounters: state.encounters.list
   }
 }
 
-export default connect(mapStateToProps)(CharactersTable);
+export default connect(mapStateToProps)(InitiativesTable);
