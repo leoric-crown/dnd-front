@@ -2,20 +2,28 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import '../css/App.css'
 import { addEncounter } from '../actions/encounterActions'
+import { getSelect } from '../util/components'
 
 const ENCOUNTER_NAME = 'name'
 const STATUS = 'status'
+export const getStatusOptions = () => {
+  return [
+    <option key='Preparing' value='Preparing'>Preparing</option>,
+    <option key='Active' value='Active'>Active</option>,
+    <option key='Concluded' value='Concluded'>Concluded</option>
+  ]
+}
+
 
 class EncounterForm extends Component {
   state = {
     name: '',
-    status: ''
+    status: 'Preparing'
   }
   constructor(props) {
     super(props)
     this.firstInput = React.createRef()
   }
-
 
   handleInput = (value, key) => {
     switch(key) {
@@ -34,18 +42,20 @@ class EncounterForm extends Component {
     event.preventDefault()
     const body = JSON.stringify({
       name: this.state.name,
-      status: (this.state.status === '' ? 'Preparing' : this.state.status)
+      status: this.state.status
     })
     this.props.dispatch(addEncounter(body))
     this.setState({
       name: '',
-      status: ''
+      status: 'Preparing'
     })
     this.firstInput.current.focus()
   }
 
   render() {
-    const { name, status } = this.state
+    console.log('HELLO THIS.STATE')
+    console.log(this.state)
+    const { name } = this.state
     return (
       <div>
         <h3>Encounter Form</h3>
@@ -58,12 +68,15 @@ class EncounterForm extends Component {
               onChange = {event => {this.handleInput(event.target.value, ENCOUNTER_NAME)}}
               className = 'row'
             />
-            <input type = 'text'
-              placeholder = 'Encounter Status'
-              value = {status}
-              onChange = {event => {this.handleInput(event.target.value, STATUS)}}
-              className = 'row'
-            />
+            {getSelect({
+              propName: STATUS,
+              value: this.state.status,
+              options: getStatusOptions(),
+              inline: false
+            }, {
+              input: this.handleInput
+              }
+            )}
             <button type = 'submit' className = 'row'>
               Save
             </button>
@@ -75,4 +88,4 @@ class EncounterForm extends Component {
 }
 
 
-export default connect()(EncounterForm);
+export default connect()(EncounterForm)

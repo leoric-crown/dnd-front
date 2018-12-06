@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { removeInitiative, updateInitiative } from '../actions/initiativeActions'
-import { getDeleteButton, getEditableTextField, getEditableButton, getEditableCheckBox } from '../util/components'
+import { getSelect, getSelectOptions, getDeleteButton, getEditableTextField, getEditableButton, getEditableCheckBox } from '../util/components'
 import ReactTable from 'react-table'
 import '../css/App.css'
 import 'react-table/react-table.css'
@@ -9,6 +9,9 @@ import 'react-table/react-table.css'
 const ENCOUNTER = {name: 'encounter', type: 'object'}
 const CHARACTER = {name: 'character', type: 'object'}
 const INITIATIVE = {name: 'initiative', type: 'text'}
+const HIT_POINTS = {name: 'hitpoints', type: 'text', characterProp: true}
+const MAX_HIT_POINTS = {name: 'maxhitpoints', type: 'text', characterProp: true}
+const CONDITIONS = {name: 'conditions', type: 'select', characterProp: true}
 
 class InitiativesTable extends Component {
   state = {
@@ -18,7 +21,7 @@ class InitiativesTable extends Component {
         value: null,
         originalValue: null,
         url: null,
-        isCheckbox: false
+        isPlayer: false,
       }
   }
 
@@ -85,6 +88,7 @@ class InitiativesTable extends Component {
 
   getCellValue = (row, prop) => {
     var cellValue
+    const { characters } = this.props
     switch(prop) {
       case ENCOUNTER:
         cellValue = row.original.encounter._id
@@ -94,6 +98,22 @@ class InitiativesTable extends Component {
         break
       case INITIATIVE:
         cellValue = row.original.initiative
+        break
+      case HIT_POINTS:
+        cellValue = (row.original.characterStamp.player ?
+          characters.find(element => {
+            return element._id === row.original.character._id
+          }).hitpoints:
+          row.original.characterStamp.hitpoints
+        )
+        break
+      case MAX_HIT_POINTS:
+        cellValue = (row.original.characterStamp.player ?
+          characters.find(element => {
+            return element._id === row.original.character._id
+          }).maxhitpoints:
+          row.original.characterStamp.maxhitpoints
+        )
         break
       default:
         break
@@ -107,38 +127,60 @@ class InitiativesTable extends Component {
     const rowId = row.original._id
     if( id === rowId && editableProp === prop) {
       const value = (this.state.editableCell.value == null) ? cellValue : this.state.editableCell.value
-      if(this.state.editableCell.isCheckBox) {
-        return getEditableCheckBox(
-          {
-          value: value,
-          prop: prop
-          },
-          this.handleInput)
+      switch(prop.type) {
+        case 'checkBox':
+          return getEditableCheckBox({
+              value: value,
+              prop: prop
+            },
+            this.handleInput)
+        case 'select':
+          return getSelect({
+            propName: prop.name,
+            value: value,
+            options: getSelectOptions(prop.name),
+            inline: true
+          },{
+            input: this.handleInput,
+            resetEditableCell: this.resetEditableCell,
+            submit: this.handleSubmit
+          })
+        case 'text':
+          return getEditableTextField(value, {
+            input: this.handleInput,
+            keyUp: this.handleKeyUp,
+            resetEditableCell: this.resetEditableCell
+          })
+        default:
+          break
+      }
+    }
+    else {
+      var displayValue
+      switch(prop.type) {
+        case 'checkBox':
+          displayValue = (cellValue ? prop.checked : prop.unchecked)
+          break
+        default:
+          displayValue = cellValue
       }
 
-      return getEditableTextField(row, value, {
-        input: this.handleInput,
-        keyUp: this.handleKeyUp,
-        resetEditableCell: this.resetEditableCell
-      })
-    }
-    var displayValue
-    if(prop.type === 'checkBox') {
-      displayValue = (cellValue ? prop.type.on : prop.type.off)
-    } else {
-      displayValue = cellValue
-    }
+      var url = row.original.request.url
+      if(prop.characterProp){
+        url = row.original.characterStamp.request.url
+      }
 
-    return getEditableButton({
-      id: rowId,
-      editableProp: prop,
-      value: cellValue,
-      displayValue: displayValue,
-      originalValue: cellValue,
-      url: row.original.request.url,
-      isCheckBox: (prop.type === 'checkBox' ? true : false)
-    },
-    this.handleClick)
+      return getEditableButton({
+        id: rowId,
+        editableProp: prop,
+        value: cellValue,
+        displayValue: displayValue,
+        originalValue: cellValue,
+        url: url,
+        player: row.original.characterStamp.player
+      },
+      this.handleClick)
+    }
   }
 
   getColumns = () => {
@@ -171,6 +213,21 @@ class InitiativesTable extends Component {
           getHeaderProps: () => {return {style: {fontWeight: 'bold'}}},
         },
         {
+          Header: 'HP',
+          Cell: row => this.getCell(row, HIT_POINTS),
+          getHeaderProps: () => {return {style: {fontWeight: 'bold'}}},
+        },
+        {
+          Header: 'Max HP',
+          Cell: row => this.getCell(row, MAX_HIT_POINTS),
+          getHeaderProps: () => {return {style: {fontWeight: 'bold'}}},
+        },
+        {
+          Header: 'Conditions',
+          Cell: row => this.getCell(row, CONDITIONS),
+          getHeaderProps: () => {return {style: {fontWeight: 'bold'}}},
+        },
+        {
           Header: '',
           Cell: row => getDeleteButton(row, this.handleDelete),
           sortable: false,
@@ -180,6 +237,7 @@ class InitiativesTable extends Component {
   }
 
   render() {
+    console.log(this.state)
     const { initiatives } = this.props
     return(
 
@@ -200,7 +258,8 @@ class InitiativesTable extends Component {
 const mapStateToProps = (state) => {
   return {
     initiatives: state.initiatives.list,
-    encounters: state.encounters.list
+    encounters: state.encounters.list,
+    characters: state.characters.list
   }
 }
 

@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import '../css/App.css'
 import { addInitiative } from '../actions/initiativeActions'
 
@@ -9,8 +10,8 @@ const INITIATIVE = 'initiative'
 class InitiativeForm extends Component {
   state = {
     initiative: '',
-    encounter: '',
-    character: '',
+    encounter: 'Choose Encounter',
+    character: 'Choose Character',
   }
   constructor(props) {
     super(props)
@@ -72,24 +73,24 @@ class InitiativeForm extends Component {
       <h3>Initiative Form</h3>
       <form onSubmit = {this.handleSubmit}>
         <div>
+        <select
+          id='encounter'
+          value={this.state.encounter}
+          onChange={event => {this.handleInput(event.target.value, ENCOUNTER)}}>
+          {this.getSelectOptions().encounters}
+        </select>
+        <select
+          id='character'
+          value={this.state.character}
+          onChange={event => {this.handleInput(event.target.value, CHARACTER)}}>
+          {this.getSelectOptions().characters}
+        </select>
           <input type = 'text'
             ref = {this.firstInput}
             placeholder = 'Initiative Roll'
             value = {this.state.initiative}
             onChange = {event => {this.handleInput(event.target.value, INITIATIVE)}}
           />
-          <select
-            id='encounter'
-            defaultValue={'Choose Encounter'}
-            onChange={event => {this.handleInput(event.target.value, ENCOUNTER)}}>
-            {this.getSelectOptions().encounters}
-          </select>
-          <select
-            id='character'
-            defaultValue={'Choose Character'}
-            onChange={event => {this.handleInput(event.target.value, CHARACTER)}}>
-            {this.getSelectOptions().characters}
-          </select>
           <button type = 'submit' className = 'row'>
             Save
           </button>
@@ -100,4 +101,13 @@ class InitiativeForm extends Component {
 
   }
 }
-export default InitiativeForm
+
+const mapStateToProps = (state) => {
+  return {
+    encounters: state.encounters.list,
+    characters: state.characters.list,
+    initiatives: state.initiatives.list,
+  }
+}
+
+export default connect(mapStateToProps)(InitiativeForm)

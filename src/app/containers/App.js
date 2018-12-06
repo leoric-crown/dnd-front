@@ -1,9 +1,7 @@
 import React, { Component, Fragment } from 'react';
-
 import '../css/App.css';
 import { connect } from 'react-redux'
 import {BrowserRouter as Router, Route, Switch } from 'react-router-dom'
-import TemplateComponent from '../components/TemplateComponent'
 import Nav from '../components/Nav'
 import Encounters from './Encounters'
 import Characters from './Characters'
@@ -28,7 +26,6 @@ class App extends Component {
             <div>
               <Nav/>
               <Switch>
-                <Route exact path='/testing' component={TemplateComponent}/>
                 <Route exact path='/encounters' component={Encounters}/>
                 <Route exact path='/characters' component={Characters}/>
                 <Route exact path='/initiatives' component={Initiatives}/>

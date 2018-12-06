@@ -1,8 +1,12 @@
 import { fetchCollection, postDocument, patchByUrl, deleteByUrl } from '../util/api'
 
 const INITIATIVES = 'initiatives'
+const CHARACTERS = 'characters'
 const fetchAllInitiatives = () => {
   return fetchCollection(INITIATIVES)
+}
+const fetchAllCharacters = () => {
+  return fetchCollection(CHARACTERS)
 }
 
 export function getInitiatives (dispatch) {
@@ -37,17 +41,33 @@ export function addInitiative (body) {
 }
 
 export function updateInitiative (body) {
+  console.log('updateinitiative)')
+  console.log(body)
   return dispatch => {
-    patchByUrl(body)
-    .then(fetchAllInitiatives)
-    .then(data => {
-      dispatch({
-        type: 'PATCH_INITIATIVE',
-        payload: {
-          initiatives: data.initiatives
-        }
+    if(!body.player) {
+      patchByUrl(body)
+      .then(fetchAllInitiatives)
+      .then(data => {
+        dispatch({
+          type: 'PATCH_INITIATIVE',
+          payload: {
+            initiatives: data.initiatives
+          }
+        })
       })
-    })
+    }
+    else {
+      patchByUrl(body)
+      .then(fetchAllCharacters)
+      .then(data => {
+        dispatch({
+          type: 'PATCH_CHARACTER',
+          payload: {
+            characters: data.characters
+          }
+        })
+      })
+    }
   }
 }
 

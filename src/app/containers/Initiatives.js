@@ -9,10 +9,6 @@ class Initiatives extends Component {
     return (
       <div>
         <InitiativeForm
-        encounters={this.props.encounters}
-        characters={this.props.characters}
-        initiatives={this.props.initiatives}
-        dispatch={this.props.dispatch}
         />
         <InitiativesTable/>
       </div>

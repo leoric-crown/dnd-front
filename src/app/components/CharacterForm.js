@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import '../css/App.css'
 import { addCharacter } from '../actions/characterActions'
+import { getSelectOptions } from '../util/components'
 
 const CHARACTER_NAME = 'name'
 const LEVEL = 'level'
@@ -50,18 +51,6 @@ class CharacterForm extends Component {
     }
   }
 
-  getLevelOptions = () => {
-    const levels = Array.from(Array(21).keys())
-    return levels.map(level => {
-      if(level === 0) return (
-        <option key={0} value='Level' disabled> Level </option>
-      )
-      return (
-        <option key={level} value={level}>{level}</option>
-      )
-    })
-  }
-
   handleSubmit = event => {
     event.preventDefault()
     const body = JSON.stringify(this.state)
@@ -94,7 +83,7 @@ class CharacterForm extends Component {
               id='levelSelect'
               value={this.state.level}
               onChange={event => {this.handleInput(event.target.value, LEVEL)}}>
-              {this.getLevelOptions()}
+              {getSelectOptions(LEVEL)}
             </select>
             <input type = 'text'
               placeholder = 'Armor Class'

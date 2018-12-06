@@ -47,7 +47,7 @@
 }
 
 .cancel {
-  font-weight: 400;
+  font-weight: bold;
   font-family:inherit;
 }
 
@@ -56,6 +56,15 @@
   color:#FF0000;
 }
 
+.confirm {
+  font-weight: bold;
+  font-family:inherit;
+}
+
+.confirm:after{
+  content: '✓';
+  color:#008000;
+}
 .active {
   font-weight: bold;
 }

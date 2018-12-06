@@ -1,7 +1,6 @@
 import config from '../../config/main'
 
 export const fetchCollection = (collection) => {
-  console.log(`in fetchCollection, fetching ${config.apiPath}/${collection}`)
   return fetch(`${config.apiPath}/${collection}`, {
     method: 'GET',
     header: {'Content-Type': 'application/json'}
@@ -63,18 +62,6 @@ export const postCharacter = body => {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: body
-  })
-}
-
-export const patchCharacter = data => {
-  const body = [{
-    propName: data.editableProp,
-    value: data.value
-  }]
-  return fetch(`${config.apiPath}/encounters/${data.id}`, {
-    method: 'PATCH',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify(body)
   })
 }
 

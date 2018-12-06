@@ -1,13 +1,13 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { removeCharacter, updateCharacter } from '../actions/characterActions'
-import { getDeleteButton, getEditableTextField, getEditableButton, getEditableCheckBox} from '../util/components'
+import { getSelect, getSelectOptions, getDeleteButton, getEditableTextField, getEditableButton, getEditableCheckBox} from '../util/components'
 import ReactTable from 'react-table'
 import '../css/App.css'
 import 'react-table/react-table.css'
 
 const NAME = {name: 'name', type: 'text'}
-const LEVEL = {name: 'level', type: 'text'}
+const LEVEL = {name: 'level', type: 'select'}
 const ARMOR_CLASS = {name: 'armorclass', type: 'text'}
 const MAX_HIT_POINTS = {name: 'maxhitpoints', type: 'text'}
 const CONDITIONS = {name: 'conditions', type: 'select'}
@@ -20,8 +20,7 @@ class CharactersTable extends Component {
         editableProp: null,
         value: null,
         originalValue: null,
-        url: null,
-        isCheckbox: false
+        url: null
       }
   }
 
@@ -122,38 +121,55 @@ class CharactersTable extends Component {
     const rowId = row.original._id
     if( id === rowId && editableProp === prop) {
       const value = (this.state.editableCell.value == null) ? cellValue : this.state.editableCell.value
-      if(this.state.editableCell.isCheckBox) {
-        return getEditableCheckBox(
-          {
-          value: value,
-          prop: prop
-          },
-          this.handleInput)
+      switch(prop.type) {
+        case 'checkBox':
+          return getEditableCheckBox({
+              value: value,
+              prop: prop
+            },
+            this.handleInput)
+        case 'select':
+          return getSelect({
+            propName: prop.name,
+            value: value,
+            options: getSelectOptions(prop.name),
+            inline: true
+          },{
+            input: this.handleInput,
+            resetEditableCell: this.resetEditableCell,
+            submit: this.handleSubmit
+          })
+        case 'text':
+          return getEditableTextField(value, {
+            input: this.handleInput,
+            keyUp: this.handleKeyUp,
+            resetEditableCell: this.resetEditableCell
+          })
+        default:
+          break
+      }
+    }
+    else {
+      var displayValue
+      switch(prop.type) {
+        case 'checkBox':
+          displayValue = (cellValue ? prop.checked : prop.unchecked)
+          break
+        default:
+          displayValue = cellValue
       }
 
-      return getEditableTextField(row, value, {
-        input: this.handleInput,
-        keyUp: this.handleKeyUp,
-        resetEditableCell: this.resetEditableCell
-      })
+      return getEditableButton({
+        id: rowId,
+        editableProp: prop,
+        value: cellValue,
+        displayValue: displayValue,
+        originalValue: cellValue,
+        url: row.original.request.url,
+        isCheckBox: (prop.type === 'checkBox' ? true : false)
+      },
+      this.handleClick)
     }
-    var displayValue
-    if(prop.type === 'checkBox') {
-      displayValue = (cellValue ? prop.checked : prop.unchecked)
-    } else {
-      displayValue = cellValue
-    }
-
-    return getEditableButton({
-      id: rowId,
-      editableProp: prop,
-      value: cellValue,
-      displayValue: displayValue,
-      originalValue: cellValue,
-      url: row.original.request.url,
-      isCheckBox: (prop.type === 'checkBox' ? true : false)
-    },
-    this.handleClick)
   }
 
   getColumns = () => {
@@ -194,7 +210,6 @@ class CharactersTable extends Component {
 
   render() {
     const { characters } = this.props
-    console.log(this.state)
     return(
 
       <div>
@@ -213,8 +228,7 @@ class CharactersTable extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    characters: state.characters.list,
-    testing: state.template.testing
+    characters: state.characters.list
   }
 }
 
