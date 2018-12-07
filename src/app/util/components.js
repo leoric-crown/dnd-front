@@ -65,9 +65,8 @@ export const getEditableTextField = (value, handlers) => {
 
 export const getEditableButton = (payload, handleClick) => {
   return (
-    <div>
-      <div></div>
-      <button className="btn btn-primary editableButton" onClick={() => handleClick(payload)}>
+    <div className="verticalCenter">
+      <button className="btn btn-primary plainButton" onClick={() => handleClick(payload)}>
       {payload.displayValue}
       </button>
     </div>

@@ -17,8 +17,6 @@ export const fetchAllInitiatives = () => {
 }
 
 export const postDocument = (collection, body) => {
-  console.log('POSTING DOCUMENT')
-  console.log(body)
   return fetch(`${config.apiPath}/${collection}`, {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
@@ -63,6 +61,14 @@ export const postCharacter = body => {
     headers: {'Content-Type': 'application/json'},
     body: body
   })
+}
+
+export const fetchByUrl = (url) => {
+  return fetch(url, {
+    method: 'GET',
+    headers: {'Content-Type': 'application/json'}
+  })
+  .then(res => res.json())
 }
 
 export const patchByUrl = data => {

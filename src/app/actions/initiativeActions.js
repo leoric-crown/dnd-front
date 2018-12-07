@@ -36,6 +36,15 @@ export function addInitiative (body) {
           }
         })
       })
+      .then(fetchAllCharacters)
+      .then(data => {
+        dispatch({
+          type:'GET_ALL_CHARACTERS',
+          payload: {
+            characters: data.characters
+          }
+        })
+      })
     })
   }
 }
@@ -64,6 +73,15 @@ export function updateInitiative (body) {
           type: 'PATCH_CHARACTER',
           payload: {
             characters: data.characters
+          }
+        })
+      })
+      .then(fetchAllInitiatives)
+      .then(data => {
+        dispatch({
+          type: 'GET_ALL_INITIATIVES',
+          payload: {
+            initiatives: data.initiatives
           }
         })
       })

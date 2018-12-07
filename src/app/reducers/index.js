@@ -6,7 +6,7 @@ import initiatives from './initiativeReducer'
 
 export default combineReducers({
   characters,
-  encounters,
   conditions,
+  encounters,
   initiatives
 })

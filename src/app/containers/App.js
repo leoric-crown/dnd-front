@@ -6,6 +6,7 @@ import Nav from '../components/Nav'
 import Encounters from './Encounters'
 import Characters from './Characters'
 import Initiatives from './Initiatives'
+import ConditionsSelect from '../components/ConditionsSelect'
 import { getCharacters } from '../actions/characterActions'
 import { getEncounters } from '../actions/encounterActions'
 import { getConditions } from '../actions/conditionActions'
@@ -26,6 +27,7 @@ class App extends Component {
             <div>
               <Nav/>
               <Switch>
+                <Route exact path='/' component={ConditionsSelect}/>
                 <Route exact path='/encounters' component={Encounters}/>
                 <Route exact path='/characters' component={Characters}/>
                 <Route exact path='/initiatives' component={Initiatives}/>

@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { removeInitiative, updateInitiative } from '../actions/initiativeActions'
 import { getSelect, getSelectOptions, getDeleteButton, getEditableTextField, getEditableButton, getEditableCheckBox } from '../util/components'
+import ConditionsSelect from  '../components/ConditionsSelect'
 import ReactTable from 'react-table'
 import '../css/App.css'
 import 'react-table/react-table.css'
@@ -11,7 +12,7 @@ const CHARACTER = {name: 'character', type: 'object'}
 const INITIATIVE = {name: 'initiative', type: 'text'}
 const HIT_POINTS = {name: 'hitpoints', type: 'text', characterProp: true}
 const MAX_HIT_POINTS = {name: 'maxhitpoints', type: 'text', characterProp: true}
-const CONDITIONS = {name: 'conditions', type: 'select', characterProp: true}
+const CONDITIONS = {name: 'conditions', type: 'conditionsSelect', characterProp: true}
 
 class InitiativesTable extends Component {
   state = {
@@ -88,7 +89,8 @@ class InitiativesTable extends Component {
 
   getCellValue = (row, prop) => {
     var cellValue
-    const { characters } = this.props
+    const { characters, conditions } = this.props
+    const { characterStamp } = row.original
     switch(prop) {
       case ENCOUNTER:
         cellValue = row.original.encounter._id
@@ -100,19 +102,19 @@ class InitiativesTable extends Component {
         cellValue = row.original.initiative
         break
       case HIT_POINTS:
-        cellValue = (row.original.characterStamp.player ?
+        cellValue = (characterStamp.player ?
           characters.find(element => {
             return element._id === row.original.character._id
           }).hitpoints:
-          row.original.characterStamp.hitpoints
+          characterStamp.hitpoints
         )
         break
       case MAX_HIT_POINTS:
-        cellValue = (row.original.characterStamp.player ?
+        cellValue = (characterStamp.player ?
           characters.find(element => {
             return element._id === row.original.character._id
           }).maxhitpoints:
-          row.original.characterStamp.maxhitpoints
+          characterStamp.maxhitpoints
         )
         break
       default:
@@ -157,9 +159,13 @@ class InitiativesTable extends Component {
     }
     else {
       var displayValue
+
       switch(prop.type) {
         case 'checkBox':
           displayValue = (cellValue ? prop.checked : prop.unchecked)
+          break
+        case 'conditionsSelect':
+          displayValue = (this.props.conditions.length > 0 ? cellValue.map(c=>c.name) : '')
           break
         default:
           displayValue = cellValue
@@ -180,6 +186,35 @@ class InitiativesTable extends Component {
         player: row.original.characterStamp.player
       },
       this.handleClick)
+    }
+  }
+
+  getConditionProps = (row) => {
+    const { characters, conditions } = this.props
+    const doc = row.original.characterStamp
+    var character = doc
+    if(doc.player) {
+      character = characters.find(c => c._id === doc._id)
+    }
+    const charConditions = character.conditions.map( conditionId => conditions.find(c => c._id === conditionId)).map(c => {
+      return {
+        name: c.name,
+        id: c._id
+      }
+    })
+    return {
+      options: conditions.map(c => {
+                  return {
+                    name: c.name,
+                    id: c._id,
+                  }
+                }).sort((a,b) => {
+                  if(a.name < b.name) return -1
+                  else if (a.name > b.name) return 1
+                  else return 0
+                }),
+      originalValues: charConditions
+
     }
   }
 
@@ -224,7 +259,13 @@ class InitiativesTable extends Component {
         },
         {
           Header: 'Conditions',
-          Cell: row => this.getCell(row, CONDITIONS),
+          //Cell: row => this.getCell(row, CONDITIONS),
+          Cell: row =>
+          <ConditionsSelect
+            row={row}
+            options={this.getConditionProps(row).options}
+            values={this.getConditionProps(row).originalValues}
+          />,
           getHeaderProps: () => {return {style: {fontWeight: 'bold'}}},
         },
         {
@@ -237,8 +278,10 @@ class InitiativesTable extends Component {
   }
 
   render() {
-    console.log(this.state)
     const { initiatives } = this.props
+    if(this.props.conditions.length === 0) {
+      return (<div>Loading</div>)
+    }
     return(
 
       <div>
@@ -259,7 +302,8 @@ const mapStateToProps = (state) => {
   return {
     initiatives: state.initiatives.list,
     encounters: state.encounters.list,
-    characters: state.characters.list
+    characters: state.characters.list,
+    conditions: state.conditions.list
   }
 }
 

@@ -176,7 +176,6 @@ class EncountersTable extends Component {
 
   render() {
     const { encounters } = this.props
-    console.log(this.state)
     return(
 
       <div>
