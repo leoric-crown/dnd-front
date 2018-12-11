@@ -1,0 +1,127 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  animation: App-logo-spin infinite 20s linear;
+  height: 40vmin;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+.rows .row {
+  display: inline-block;
+}
+
+div.rt-tr {
+  align-items: center;
+}
+
+div.rt-td {
+  align-self: center;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ReactTable .rt-td {
+  vertical-align: middle;
+  text-align: center;
+  white-space: unset;
+}
+
+.plainButton {
+  background:none;
+  color:inherit;
+  border:none;
+  font:inherit;
+  width:50%
+}
+
+.editableField {
+  text-align: center;
+  width: 43%
+}
+
+.cancel {
+  display: inline-flex;
+  font-weight: bold;
+  font-family:inherit;
+}
+
+.cancel:after{
+  content: '\00d7';
+  color:#FF0000;
+}
+
+.confirm {
+  display: inline-flex;
+  font-weight: bold;
+  font-family: inherit;
+}
+
+.confirm:after{
+  content: '✓';
+  color:#008000;
+}
+.active {
+  font-weight: bold;
+}
+
+.nav ul {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.nav li:first-child {
+  padding: 20;
+  padding-left: 0;
+}
+
+ul {
+  padding-left: 0;
+}
+
+li {
+  list-style-type: none;
+  padding: 10px;
+  text-decoration: none;
+  margin:10px 30px 0 0;
+}
+
+select {
+  font-size:inherit;
+  font-family:inherit;
+  padding: 1px;
+}
+
+input[type='text'] {
+  font-size:inherit;
+  font-family:inherit;
+}
+button {
+  font-size:inherit;
+  font-family:inherit;
+}
+
+.multiSelectRow {
+  height:200px
+}

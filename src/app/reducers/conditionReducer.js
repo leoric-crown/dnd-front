@@ -1,11 +1,11 @@
-const templateReducer = (state = {
-  testing: 0,
+const conditionReducer = (state = {
+  list: []
 }, action) => {
   switch (action.type) {
-    case "SET_TESTING":
+    case 'GET_ALL_CONDITIONS':
       state = {
         ...state,
-        testing: action.payload.testing
+        list: action.payload.conditions
       }
       break
     default:
@@ -13,4 +13,4 @@ const templateReducer = (state = {
   }
   return state
 }
-export default templateReducer
+export default conditionReducer
