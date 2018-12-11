@@ -8,8 +8,7 @@ class Initiatives extends Component {
   render() {
     return (
       <div>
-        <InitiativeForm
-        />
+        <InitiativeForm/>
         <InitiativesTable/>
       </div>
     )

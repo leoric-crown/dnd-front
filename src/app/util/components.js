@@ -40,7 +40,7 @@ export const getSelect = (payload, handlers) => {
 export const getDeleteButton = (row, handleDelete) => {
   return (
     <div>
-      <button className="btn btn-primary" onClick={() => handleDelete(row.original.request.url)
+      <button className="btn btn-primary" onClick={() => handleDelete(row.original)
       }>
       Delete
       </button>

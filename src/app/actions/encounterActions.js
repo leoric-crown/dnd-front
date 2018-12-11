@@ -1,5 +1,25 @@
 import { fetchAllEncounters, fetchEncounter, postEncounter, patchByUrl, deleteByUrl } from '../util/api'
 
+export function setActiveEncounter (data, dispatch) {
+  return dispatch =>
+  patchByUrl({
+    url: data.url,
+    editableProp: {
+      name: 'status'
+    },
+    value: 'Active'
+  })
+  .then(fetchAllEncounters)
+  .then(data => {
+    dispatch({
+      type: 'SET_ACTIVE_ENCOUNTER',
+      payload: {
+        encounters: data.encounters
+      }
+    })
+  })
+}
+
 export function getEncounters (dispatch) {
   return dispatch => {
     fetchAllEncounters()

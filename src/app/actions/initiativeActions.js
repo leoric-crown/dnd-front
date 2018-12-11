@@ -49,6 +49,56 @@ export function addInitiative (body) {
   }
 }
 
+export function setActiveInitiative (url) {
+  return dispatch => {
+    const data = {
+      url: url,
+      editableProp: {name: 'active'},
+      value: true,
+    }
+    patchByUrl(data)
+    .then(fetchAllInitiatives)
+    .then(data => {
+      dispatch({
+        type: 'SET_ACTIVE_INITIATIVE',
+        payload: {
+          initiatives: data.initiatives
+        }
+      })
+    })
+
+  }
+}
+
+export function setNextActiveInitiative (data, mustDelete = false) {
+  return dispatch => {
+    const payload = {
+      url: data.url,
+      editableProp: {name: 'active'},
+      value: true,
+      prevUrl: data.prevUrl
+    }
+    mustDelete ? deleteByUrl(data.prevUrl) :
+    patchByUrl({
+      url: payload.prevUrl,
+      editableProp: {name: 'active'},
+      value: false
+    })
+    .then(
+      patchByUrl(payload)
+      .then(fetchAllInitiatives)
+      .then(data => {
+        dispatch({
+          type: 'SET_ACTIVE_INITIATIVE',
+          payload: {
+            initiatives: data.initiatives
+          }
+        })
+      })
+    )
+  }
+}
+
 export function updateInitiative (body) {
   console.log('updateinitiative)')
   console.log(body)

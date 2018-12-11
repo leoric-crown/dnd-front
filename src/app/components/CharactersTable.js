@@ -36,8 +36,8 @@ class CharactersTable extends Component {
     })
   }
 
-  handleDelete = url => {
-    this.props.dispatch(removeCharacter(url))
+  handleDelete = originalRow => {
+    this.props.dispatch(removeCharacter(originalRow.request.url))
   }
 
   handleClick = (payload) => {
@@ -176,31 +176,42 @@ class CharactersTable extends Component {
     return [
         {
           Header: 'Name',
+          id: 'name',
+          accessor: row => row.name,
           Cell: row => this.getCell(row,NAME),
           getHeaderProps: () => {return {style: {fontWeight: 'bold'}}}
         },
         {
           Header: 'Level',
+          id: 'level',
+          accessor: row => row.level,
           Cell: row => (this.getCell(row,LEVEL)),
           getHeaderProps: () => {return {style: {fontWeight: 'bold'}}}
         },
         {
           Header: 'Armor Class',
+          id: 'armorclass',
+          accessor: row => row.armorclass,
           Cell: row => this.getCell(row,ARMOR_CLASS),
           getHeaderProps: () => {return {style: {fontWeight: 'bold'}}}
         },
         {
           Header: 'Max HP',
+          id: 'maxhp',
+          accessor: row => row.maxhitpoints,
           Cell: row => this.getCell(row,MAX_HIT_POINTS),
           getHeaderProps: () => {return {style: {fontWeight: 'bold'}}}
         },
         {
           Header: 'Player',
+          id: 'player',
+          accessor: row => row.player,
           Cell: row => this.getCell(row,PLAYER),
-          getHeaderProps: () => {return {style: {fontWeight: 'bold'}}}
+          getHeaderProps: () => {return {style: {fontWeight: 'bold'}}},
         },
         {
           Header: '',
+          id: 'buttons',
           Cell: row => getDeleteButton(row, this.handleDelete),
           sortable: false,
           width: 100

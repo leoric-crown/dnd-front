@@ -29,6 +29,13 @@ class Nav extends Component {
               </NavLink>
             </div>
           </li>
+          <li>
+            <div>
+              <NavLink to='/encounters/active' exact activeClassName='active'>
+                <em> Active Encounter </em>
+              </NavLink>
+            </div>
+          </li>
         </ul>
       </nav>
     )

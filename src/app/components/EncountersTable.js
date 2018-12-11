@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { removeEncounter, updateEncounter } from '../actions/encounterActions'
+import { removeEncounter, updateEncounter, setActiveEncounter } from '../actions/encounterActions'
 import { getSelect, getSelectOptions, getDeleteButton, getEditableTextField, getEditableButton, getEditableCheckBox } from '../util/components'
 import ReactTable from 'react-table'
 import '../css/App.css'
@@ -32,8 +32,8 @@ class EncountersTable extends Component {
     })
   }
 
-  handleDelete = url => {
-    this.props.dispatch(removeEncounter(url))
+  handleDelete = originalRow => {
+    this.props.dispatch(removeEncounter(originalRow.request.url))
   }
 
   handleClick = (payload) => {
@@ -79,6 +79,13 @@ class EncountersTable extends Component {
       this.props.dispatch(updateEncounter(editableCell))
     }
     this.resetEditableCell()
+  }
+
+  setActiveEncounter = (row) => {
+    this.props.dispatch(setActiveEncounter({
+      url: row.original.request.url,
+      id: row.original._id
+    }))
   }
 
   getCellValue = (row, prop) => {
@@ -167,7 +174,16 @@ class EncountersTable extends Component {
         },
         {
           Header: '',
-          Cell: row => getDeleteButton(row, this.handleDelete),
+          Cell: row => {
+            return (
+              <div>
+                <button className="btn btn-primary" onClick={() => this.setActiveEncounter(row)}>
+                Set Active
+                </button>
+                {getDeleteButton(row, this.handleDelete)}
+              </div>
+            )
+          },
           sortable: false,
           width: 100
         }

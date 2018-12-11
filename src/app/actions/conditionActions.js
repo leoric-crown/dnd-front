@@ -1,10 +1,12 @@
+import { fetchCollection } from '../util/api'
+
+const CONDITIONS = 'conditions'
+// const fetchAllConditions = () => {
+//   return fetchCollection(CONDITIONS)
+// }
 export function getConditions (dispatch) {
   return dispatch => {
-    fetch('http://localhost:5000/conditions', {
-      method: 'GET',
-      headers: {'Content-Type': 'application/json'}
-    })
-    .then(res => res.json())
+    fetchCollection(CONDITIONS)
     .then(data => {
       dispatch({
         type: 'GET_ALL_CONDITIONS',

@@ -67,18 +67,28 @@ class InitiativeForm extends Component {
     this.firstInput.current.focus()
   }
 
+  componentDidMount () {
+    if(this.state.encounter !== this.props.encounter) {
+      this.setState({encounter: this.props.encounter})
+    }
+  }
+
   render() {
     return (
       <div>
       <h3>Initiative Form</h3>
       <form onSubmit = {this.handleSubmit}>
         <div>
-        <select
-          id='encounter'
-          value={this.state.encounter}
-          onChange={event => {this.handleInput(event.target.value, ENCOUNTER)}}>
-          {this.getSelectOptions().encounters}
-        </select>
+        {(!this.props.encounter ?
+          <select
+            id='encounter'
+            value={this.state.encounter}
+            onChange={event => {this.handleInput(event.target.value, ENCOUNTER)}}>
+            {this.getSelectOptions().encounters}
+          </select> :
+          <div>{this.props.encounter.name}</div>
+         )}
+
         <select
           id='character'
           value={this.state.character}

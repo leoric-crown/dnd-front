@@ -1,6 +1,7 @@
 import config from '../../config/main'
 
 export const fetchCollection = (collection) => {
+  console.log(`${config.apiPath}/${collection}`)
   return fetch(`${config.apiPath}/${collection}`, {
     method: 'GET',
     header: {'Content-Type': 'application/json'}
@@ -13,7 +14,6 @@ export const fetchAllInitiatives = () => {
     method: 'GET',
     header: {'Content-Type': 'application/json'}
   })
-  .then(res => res.json())
 }
 
 export const postDocument = (collection, body) => {
@@ -72,6 +72,8 @@ export const fetchByUrl = (url) => {
 }
 
 export const patchByUrl = data => {
+  console.log('[atchbyurl]')
+  console.log(data)
   const body = [{
     propName: data.editableProp.name,
     value: data.value

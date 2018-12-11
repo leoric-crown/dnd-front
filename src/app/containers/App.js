@@ -4,9 +4,9 @@ import { connect } from 'react-redux'
 import {BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import Nav from '../components/Nav'
 import Encounters from './Encounters'
+import ActiveEncounter from './ActiveEncounter'
 import Characters from './Characters'
 import Initiatives from './Initiatives'
-import ConditionsSelect from '../components/ConditionsSelect'
 import { getCharacters } from '../actions/characterActions'
 import { getEncounters } from '../actions/encounterActions'
 import { getConditions } from '../actions/conditionActions'
@@ -27,8 +27,8 @@ class App extends Component {
             <div>
               <Nav/>
               <Switch>
-                <Route exact path='/' component={ConditionsSelect}/>
                 <Route exact path='/encounters' component={Encounters}/>
+                <Route exact path='/encounters/active' component={ActiveEncounter}/>
                 <Route exact path='/characters' component={Characters}/>
                 <Route exact path='/initiatives' component={Initiatives}/>
               </Switch>

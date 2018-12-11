@@ -9,7 +9,6 @@ const STATUS = 'status'
 export const getStatusOptions = () => {
   return [
     <option key='Preparing' value='Preparing'>Preparing</option>,
-    <option key='Active' value='Active'>Active</option>,
     <option key='Concluded' value='Concluded'>Concluded</option>
   ]
 }

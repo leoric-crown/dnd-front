@@ -5,24 +5,24 @@ import Picky from 'react-picky'
 import 'react-picky/dist/picky.css';
 
 class ConditionsSelect extends Component {
-  getValues = () => {
-    const { characters, conditions } = this.props
-    const doc = this.props.row.original.characterStamp
-    var character = doc
-    if(doc.player) {
-      character = characters.find(c => c._id === doc._id)
-    }
-    const charConditions = character.conditions.map( conditionId => conditions.find(c => c._id === conditionId)).map(c => {
-      return {
-        name: c.name,
-        id: c._id
-      }
-    })
-    this.setState({
-      originalValues: charConditions,
-      values: charConditions
-    })
-  }
+  // getValues = () => {
+  //   const { characters, conditions } = this.props
+  //   const doc = this.props.row.original.characterStamp
+  //   var character = doc
+  //   if(doc.player) {
+  //     character = characters.find(c => c._id === doc._id)
+  //   }
+  //   const charConditions = character.conditions.map( conditionId => conditions.find(c => c._id === conditionId)).map(c => {
+  //     return {
+  //       name: c.name,
+  //       id: c._id
+  //     }
+  //   })
+  //   this.setState({
+  //     originalValues: charConditions,
+  //     values: charConditions
+  //   })
+  // }
 
   state = {
     originalValues: null,
@@ -37,6 +37,7 @@ class ConditionsSelect extends Component {
       editing: true
     })
   }
+
   handleCancel = () => {
     this.setState({
       editing: false,
@@ -44,17 +45,33 @@ class ConditionsSelect extends Component {
     })
   }
 
+  handleClear = () => {
+    const initiative  = this.props.row.original
+    const body = {
+        url: initiative.characterStamp.request.url,
+        editableProp: {name:"conditions"},
+        value: [],
+        player: initiative.characterStamp.player
+    }
+    this.props.dispatch(updateInitiative(body))
+
+    this.setState({
+      editing: false,
+      values: null,
+      originalValues: null
+    })
+  }
+
   handleConfirm = () => {
     const { originalValues, values } = this.state
-
-    const original = originalValues.sort((a,b) => {
+    const original = !originalValues ? '' : originalValues.sort((a,b) => {
       if(a.name < b.name) return -1
       else if (a.name > b.name) return 1
       else return 0
     }).map(c => c.name)
     .join(', ')
 
-    const newValues = values.sort((a,b) => {
+    const newValues = !values ? '' : values.sort((a,b) => {
       if(a.name < b.name) return -1
       else if (a.name > b.name) return 1
       else return 0
@@ -67,7 +84,8 @@ class ConditionsSelect extends Component {
       const body = {
           url: initiative.characterStamp.request.url,
           editableProp: {name:"conditions"},
-          value: values.map(c => c.id)
+          value: values.map(c => c.id),
+          player: initiative.characterStamp.player
       }
 
       this.props.dispatch(updateInitiative(body))
@@ -106,12 +124,22 @@ class ConditionsSelect extends Component {
     )
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
     if(!this.props.values) {
       this.setState({
         originalValues: this.props.values,
         values: this.props.values,
         editing: false
+      })
+    }
+    else if (this.props.values !== prevProps.values){
+      this.setState({
+        values: this.props.values
+      })
+    }
+    if(this.props.originalValues !== prevProps.originalValues){
+      this.setState({
+        originalValues: this.props.originalValues
       })
     }
   }
@@ -129,7 +157,7 @@ class ConditionsSelect extends Component {
         return(this.getMultiSelect())
     } else {
       const values = (this.state.values ? this.state.values : this.props.values)
-      const valuesList = values.map(c => <div>{c.name}<br/></div>)
+      const valuesList = values.map(c => <div key={c.id}>{c.name}<br/></div>)
       return (
           <div className="rt-tr">
             <button className="btn btn-primary plainButton" onClick={this.handleClick}>

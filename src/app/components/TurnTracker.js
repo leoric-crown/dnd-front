@@ -1,20 +1,20 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { removeInitiative, updateInitiative } from '../actions/initiativeActions'
+import { removeInitiative, updateInitiative, setActiveInitiative, setNextActiveInitiative} from '../actions/initiativeActions'
 import { getSelect, getSelectOptions, getDeleteButton, getEditableTextField, getEditableButton, getEditableCheckBox } from '../util/components'
 import ConditionsSelect from  '../components/ConditionsSelect'
 import ReactTable from 'react-table'
 import '../css/App.css'
 import 'react-table/react-table.css'
-
-const ENCOUNTER = {name: 'encounter', type: 'object'}
-const CHARACTER = {name: 'character', type: 'object'}
+ 
+// const CHARACTER = {name: 'character', type: 'object'}
 const INITIATIVE = {name: 'initiative', type: 'text'}
 const HIT_POINTS = {name: 'hitpoints', type: 'text', characterProp: true}
 const MAX_HIT_POINTS = {name: 'maxhitpoints', type: 'text', characterProp: true}
 
-class InitiativesTable extends Component {
+class TurnTracker extends Component {
   state = {
+      activeInitiative: null,
       editableCell: {
         id: null,
         editableProp: null,
@@ -37,7 +37,33 @@ class InitiativesTable extends Component {
     })
   }
 
+  nextTurn = () => {
+    const { activeInitiatives, activeInitiative } = this.props
+
+    if(!activeInitiative) {
+      const url = activeInitiatives[0].request.url
+      this.props.dispatch(setActiveInitiative(url))
+    }
+    else {
+      const body = {
+        editableProp: {name: 'active'},
+        value: true,
+        url: activeInitiatives[(activeInitiatives.indexOf(activeInitiative) + 1) % activeInitiatives.length].request.url,
+        prevUrl: activeInitiative.request.url
+      }
+      this.props.dispatch(setNextActiveInitiative(body))
+    }
+  }
+
   handleDelete = originalRow => {
+    if(this.state.activeInitiative._id === originalRow._id) {
+      console.log('mustdelete')
+      this.nextTurn(true)
+    }
+    else {
+      this.props.dispatch(removeInitiative(originalRow.request.url))
+    }
+
     this.props.dispatch(removeInitiative(originalRow.request.url))
   }
 
@@ -91,12 +117,15 @@ class InitiativesTable extends Component {
     const { characters } = this.props
     const { characterStamp } = row.original
     switch(prop) {
-      case ENCOUNTER:
-        cellValue = row.original.encounter._id
-        break
-      case CHARACTER:
-        cellValue = row.original.character._id
-        break
+      // case CHARACTER:
+      //   cellValue = row.original.character._id
+      //   console.log('XXXXXX')
+      //   console.log(row)
+      //   alert('hi')
+      //   if(row.original.active) {
+      //     cellValue = cellValue + 'active'
+      //   }
+      //   break
       case INITIATIVE:
         cellValue = row.original.initiative
         break
@@ -158,7 +187,6 @@ class InitiativesTable extends Component {
     }
     else {
       var displayValue
-
       switch(prop.type) {
         case 'checkBox':
           displayValue = (cellValue ? prop.checked : prop.unchecked)
@@ -218,32 +246,9 @@ class InitiativesTable extends Component {
   }
 
   getColumns = () => {
-    const { encounters, characters  } = this.props
     return [
         {
-          Header: 'Encounter',
-          id: 'encounter',
-          accessor: row => encounters.find( e => e._id === row.encounter).name,
-          Cell: row => {
-
-            return (
-              <div>
-                {this.props.encounters.find((element) =>{
-                    return element._id === row.original.encounter
-                }).name}
-              </div>
-            )
-          },
-          getHeaderProps: () => {return {style: {fontWeight: 'bold'}}},
-        },
-        {
           Header: 'Character',
-          id: 'character',
-          accessor: row => {
-            return (row.characterStamp.player ?
-              characters.find(e => e._id === row.character._id).name :
-              row.characterStamp.name)
-          },
           Cell: row => {
             return (
               <div>{row.original.characterStamp.name} </div>
@@ -252,41 +257,29 @@ class InitiativesTable extends Component {
           getHeaderProps: () => {return {style: {fontWeight: 'bold'}}},
         },
         {
+          Header: 'Active',
+          Cell: row => row.original.active ? 'Yes' : 'No',
+          getHeaderProps: () => {return {style: {fontWeight: 'bold'}}},
+        },
+        {
           Header: 'Initiative',
-          id: 'initiative',
-          accessor: row => {console.log(row); return row.initiative},
           Cell: row => this.getCell(row, INITIATIVE),
           getHeaderProps: () => {return {style: {fontWeight: 'bold'}}},
         },
         {
           Header: 'HP',
-          id: 'hp',
-          accessor: row => {
-            return (row.characterStamp.player ?
-              characters.find(e => e._id === row.character._id).hitpoints :
-              row.characterStamp.hitpoints)
-          },
           Cell: row => this.getCell(row, HIT_POINTS),
           getHeaderProps: () => {return {style: {fontWeight: 'bold'}}},
         },
         {
           Header: 'Max HP',
-          id: 'maxhp',
-          accessor: row => {
-            return (row.characterStamp.player ?
-              characters.find(e => e._id === row.character._id).maxhitpoints :
-              row.characterStamp.maxhitpoints)
-          },
           Cell: row => this.getCell(row, MAX_HIT_POINTS),
           getHeaderProps: () => {return {style: {fontWeight: 'bold'}}},
         },
         {
           Header: 'Conditions',
-          id: 'conditions',
-          accessor: row => (row.characterStamp.player ?
-                              characters.find(e => e._id === row.character._id).conditions.length :
-                              row.characterStamp.conditions.length),
-          Cell: row =>{
+          //Cell: row => this.getCell(row, CONDITIONS),
+          Cell: row => {
             return (
               <div>
                 <ConditionsSelect
@@ -308,22 +301,53 @@ class InitiativesTable extends Component {
       ]
   }
 
+  componentDidUpdate(prevProps) {
+    if(this.props.activeInitiative !== this.state.activeInitiative) {
+      this.setState({activeInitiative: this.props.activeInitiative})
+    }
+  }
 
   render() {
+    console.log('this.props')
+    console.log(this.props)
+    console.log('this.state')
+    console.log(this.state)
     const { initiatives } = this.props
-    if(this.props.conditions.length === 0 || this.props.encounters.length === 0) {
+    if(this.props.conditions.length === 0) {
       return (<div>Loading</div>)
     }
+    const { activeEncounter, activeInitiatives } = this.props
     return(
-
       <div>
-        <h3> Initiatives Table </h3>
+        <h3> Encounter Turn Tracker </h3>
+        {activeInitiatives !== null ?
+          <button type = "submit" onClick = {this.nextTurn}>
+            <h4>Next Turn</h4>
+          </button> :
+          'No characters added to Encounter'
+        }
         <ReactTable
-          data = {initiatives}
+          data = {(!activeEncounter? initiatives :
+            this.props.activeInitiatives
+            )}
           columns = {this.getColumns()}
           className  = "-striped -highlight"
-          sortable = {true}
+          sortable = {false}
           defaultPageSize = {10}
+          getTrProps={(state, rowInfo) => {
+            console.log('rowInfo')
+            console.log(rowInfo)
+            var color = 'none'
+            if(rowInfo && rowInfo.original && rowInfo.original.active) {
+              //color = 'green'
+              color='rgba(0,255,0,0.3)'
+            }
+            return {
+              style: {
+                background: color
+              }
+            }
+          }}
         />
       </div>
     )
@@ -333,10 +357,14 @@ class InitiativesTable extends Component {
 const mapStateToProps = (state) => {
   return {
     initiatives: state.initiatives.list,
-    encounters: state.encounters.list,
+    activeInitiatives: state.initiatives.list
+    .filter(initiative => initiative.encounter === state.encounters.activeEncounter._id)
+    .sort((a,b) => {
+      return(a.initiative > b.initiative ? -1: (a.initiative !== b.initiative ? 1 : 0))
+    }),
     characters: state.characters.list,
     conditions: state.conditions.list
   }
 }
 
-export default connect(mapStateToProps)(InitiativesTable);
+export default connect(mapStateToProps)(TurnTracker);
