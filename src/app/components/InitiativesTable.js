@@ -254,7 +254,7 @@ class InitiativesTable extends Component {
         {
           Header: 'Initiative',
           id: 'initiative',
-          accessor: row => {console.log(row); return row.initiative},
+          accessor: row => {return row.initiative},
           Cell: row => this.getCell(row, INITIATIVE),
           getHeaderProps: () => {return {style: {fontWeight: 'bold'}}},
         },

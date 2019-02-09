@@ -52,8 +52,6 @@ class EncounterForm extends Component {
   }
 
   render() {
-    console.log('HELLO THIS.STATE')
-    console.log(this.state)
     const { name } = this.state
     return (
       <div>

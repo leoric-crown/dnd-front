@@ -43,7 +43,6 @@ class CharacterForm extends Component {
         this.setState({conditions: value})
         break
       case PLAYER:
-      console.log(value)
         this.setState({player: value})
         break
       default:
