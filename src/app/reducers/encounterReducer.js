@@ -9,8 +9,6 @@ const encounterReducer = (state = {
     case 'PATCH_ENCOUNTER':
     case 'SET_ACTIVE_ENCOUNTER':
       const { encounters } = action.payload
-      console.log('payload')
-      console.log(action.payload)
       state = {
         ...state,
         list: action.payload.encounters,

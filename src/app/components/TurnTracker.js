@@ -6,7 +6,7 @@ import ConditionsSelect from  '../components/ConditionsSelect'
 import ReactTable from 'react-table'
 import '../css/App.css'
 import 'react-table/react-table.css'
- 
+
 // const CHARACTER = {name: 'character', type: 'object'}
 const INITIATIVE = {name: 'initiative', type: 'text'}
 const HIT_POINTS = {name: 'hitpoints', type: 'text', characterProp: true}
@@ -57,7 +57,6 @@ class TurnTracker extends Component {
 
   handleDelete = originalRow => {
     if(this.state.activeInitiative._id === originalRow._id) {
-      console.log('mustdelete')
       this.nextTurn(true)
     }
     else {
@@ -117,15 +116,6 @@ class TurnTracker extends Component {
     const { characters } = this.props
     const { characterStamp } = row.original
     switch(prop) {
-      // case CHARACTER:
-      //   cellValue = row.original.character._id
-      //   console.log('XXXXXX')
-      //   console.log(row)
-      //   alert('hi')
-      //   if(row.original.active) {
-      //     cellValue = cellValue + 'active'
-      //   }
-      //   break
       case INITIATIVE:
         cellValue = row.original.initiative
         break
@@ -308,10 +298,6 @@ class TurnTracker extends Component {
   }
 
   render() {
-    console.log('this.props')
-    console.log(this.props)
-    console.log('this.state')
-    console.log(this.state)
     const { initiatives } = this.props
     if(this.props.conditions.length === 0) {
       return (<div>Loading</div>)
@@ -335,8 +321,6 @@ class TurnTracker extends Component {
           sortable = {false}
           defaultPageSize = {10}
           getTrProps={(state, rowInfo) => {
-            console.log('rowInfo')
-            console.log(rowInfo)
             var color = 'none'
             if(rowInfo && rowInfo.original && rowInfo.original.active) {
               //color = 'green'

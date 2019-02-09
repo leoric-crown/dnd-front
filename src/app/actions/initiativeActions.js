@@ -100,8 +100,6 @@ export function setNextActiveInitiative (data, mustDelete = false) {
 }
 
 export function updateInitiative (body) {
-  console.log('updateinitiative)')
-  console.log(body)
   return dispatch => {
     if(!body.player) {
       patchByUrl(body)
